@@ -234,4 +234,72 @@ CREATE TABLE IF NOT EXISTS t_jakub_abbrent_project_SQL_primary_final
 		ON p.date = s.date 
 );
 	
+SELECT 
+	tab1.*
+FROM t_jakub_abbrent_project_SQL_primary_final tab1
+;
+
+/*
+ * 1. Rostou v prùbìhu let mzdy ve všech odvìtvích, nebo v nìkterých klesají?
+ * */
+
+SELECT DISTINCT 
+-- 	tab1.*
+	tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
+FROM t_jakub_abbrent_project_SQL_primary_final tab1
+WHERE 1=1
+	AND industry_name = 'Informaèní a komunikaèní èinnosti'
+;
+
+SELECT 
+	ind2.industry_name 
+FROM
+(
+	SELECT 
+	-- 	*,
+		ind.industry_name,
+		MIN(ind.diff) AS max_salary_drop
+	FROM 
+	(
+		WITH temp1 AS 
+		(
+			SELECT DISTINCT 
+			-- 	tab1.*
+				tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
+			FROM t_jakub_abbrent_project_SQL_primary_final tab1
+			WHERE 1=1
+	-- 			AND (tab1.industry_name = 'Informaèní a komunikaèní èinnosti'
+	-- 			OR tab1.industry_name = 'Stavebnictví')
+		),
+		temp2 AS 
+		(
+			SELECT DISTINCT 
+			-- 	tab1.*
+				tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
+			FROM t_jakub_abbrent_project_SQL_primary_final tab1
+			WHERE 1=1
+	-- 			AND (tab1.industry_name = 'Informaèní a komunikaèní èinnosti'
+	-- 			OR tab1.industry_name = 'Stavebnictví')
+		)
+		SELECT 
+			a.industry_name,
+			a.`date`,
+			a.industry_avg_salary,
+			b.`date` AS previous_date,
+			b.industry_avg_salary AS previous_industry_avg_salary,
+			(a.industry_avg_salary - b.industry_avg_salary) AS diff
+		FROM temp1 a
+		JOIN temp2 b
+			ON a.`date` = b.`date` + 1
+			AND a.industry_name = b.industry_name 
+		-- 	AND a.`date` = b.`date` + 1
+	) AS ind	-- industry_growth 
+	GROUP BY ind.industry_name 
+) AS ind2
+WHERE ind2.max_salary_drop < 0
+;
+
+/*
+ * 2. Kolik je možné si koupit litrù mléka a kilogramù chleba za první a poslední srovnatelné období v dostupných datech cen a mezd?
+ * */
 
