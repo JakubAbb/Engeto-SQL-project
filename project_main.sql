@@ -2,6 +2,16 @@
  * SQL project Engeto - main script
  * */
 
+-- #########################################################################################
+/*
+ * PART 1:
+ * - Czechia price
+ * - Czechia payroll
+ * - date from: 2006
+ * - date to: 2014
+ * */
+-- #########################################################################################
+
 /*
  * Czechia price
  * */
@@ -178,7 +188,7 @@ GROUP BY ca.payroll_year, ca.industry_branch_code
  * Czechia price + Czechia payroll
  * */
 
--- ceny a platy za rok 2016 pro celou republiku, pro jednotlivé kategorie zboží a pro jednotlivá odvìtví
+-- ceny a platy za rok 2006-2014 pro celou republiku, pro jednotlivé kategorie zboží a pro jednotlivá odvìtví
 
 CREATE TABLE IF NOT EXISTS t_jakub_abbrent_project_SQL_primary_final
 (
@@ -248,7 +258,7 @@ SELECT DISTINCT
 	tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
 FROM t_jakub_abbrent_project_SQL_primary_final tab1
 WHERE 1=1
-	AND industry_name = 'Informaèní a komunikaèní èinnosti'
+	AND tab1.industry_name = 'Informaèní a komunikaèní èinnosti'
 ;
 
 SELECT 
@@ -302,4 +312,266 @@ WHERE ind2.max_salary_drop < 0
 /*
  * 2. Kolik je možné si koupit litrù mléka a kilogramù chleba za první a poslední srovnatelné období v dostupných datech cen a mezd?
  * */
+
+-- množství produktu na jednotlivá odvìtví
+SELECT 
+-- 	tab1.*,
+	tab1.`date`, tab1.product_name, tab1.industry_name, 
+	round(tab1.industry_avg_salary / tab1.product_avg_price, 2) AS  quantity,
+	tab1.unit 
+FROM t_jakub_abbrent_project_SQL_primary_final tab1
+WHERE 1=1
+	AND (tab1.product_name = 'Mléko polotuèné pasterované' 
+	OR tab1.product_name = 'Chléb konzumní kmínový')
+	AND (tab1.`date` = 2006
+	OR tab1.`date` = 2014)
+GROUP BY tab1.`date`, tab1.product_name, tab1.industry_name 
+;
+
+-- množství produktu prùmìrnì za celou republiku 
+WITH salaries AS (
+	SELECT DISTINCT 
+		tab1.`date`, 
+		round(AVG(tab1.industry_avg_salary), 2) AS avg_salary,
+		tab1.salary_currency
+	FROM t_jakub_abbrent_project_SQL_primary_final tab1
+	WHERE 1=1
+		AND (tab1.`date` = 2006
+		OR tab1.`date` = 2014)
+	GROUP BY tab1.`date`
+),
+products AS (
+	SELECT DISTINCT 
+	-- 	tab1.*
+		tab1.`date`, tab1.product_name, tab1.product_avg_price, tab1.unit  
+	FROM t_jakub_abbrent_project_SQL_primary_final tab1
+	WHERE 1=1
+		AND (tab1.product_name = 'Mléko polotuèné pasterované' 
+		OR tab1.product_name = 'Chléb konzumní kmínový')
+		AND (tab1.`date` = 2006
+		OR tab1.`date` = 2014)
+)
+SELECT 
+	p.date, p.product_name, 
+	round(s.avg_salary / p.product_avg_price, 2) AS  quantity,
+	p.unit
+FROM products p
+JOIN salaries s 
+	ON p.date = s.date
+;
+
+/*
+ * 3. Která kategorie potravin zdražuje nejpomaleji (je u ní nejnižší percentuální meziroèní nárùst)?
+ * */
+SELECT 
+-- 	ppg.*
+	ppg.product_name,
+	round(AVG(ppg.product_avg_price_growth_percent), 2) AS product_growth_percent -- meziroèní nárùst cen potravin
+FROM (
+	WITH product1 AS (
+		SELECT DISTINCT 
+		-- 	tab1.*
+			tab1.`date`, tab1.product_name, tab1.product_avg_price, tab1.unit  
+		FROM t_jakub_abbrent_project_SQL_primary_final tab1
+	),
+	product2 AS (
+		SELECT DISTINCT 
+		-- 	tab1.*
+			tab1.`date`, tab1.product_name, tab1.product_avg_price, tab1.unit  
+		FROM t_jakub_abbrent_project_SQL_primary_final tab1
+	)
+	SELECT 
+		p1.product_name,
+		p1.`date`,
+		p1.product_avg_price,
+		p2.`date` AS previous_date,
+		p2.product_avg_price AS previous_product_avg_price,
+		round((p1.product_avg_price - p2.product_avg_price) / p2.product_avg_price * 100, 2) AS product_avg_price_growth_percent -- výpoèet meziroèního nárùstu cen potravin
+	FROM product1 p1
+	JOIN product2 p2
+		ON p1.`date` = p2.`date` + 1
+		AND p1.product_name = p2.product_name 
+-- 	WHERE p1.product_name = 'Rajská jablka èervená kulatá'
+	) AS ppg -- product_price_growth
+GROUP BY ppg.product_name 
+ORDER BY product_growth_percent
+LIMIT 1
+;
+
+/*
+ * 4. Existuje rok, ve kterém byl meziroèní nárùst cen potravin výraznì vyšší než rùst mezd (vìtší než 10 %)?
+ * */
+
+-- product price
+SELECT DISTINCT 
+-- 	tab1.*
+	tab1.`date`, 
+	round(SUM(tab1.product_avg_price), 2) AS all_products_price
+FROM t_jakub_abbrent_project_SQL_primary_final tab1
+GROUP BY tab1.`date`  
+;
+
+WITH product1 AS (
+	SELECT DISTINCT 
+		tab1.`date`, 
+		round(SUM(tab1.product_avg_price), 2) AS all_products_price
+	FROM t_jakub_abbrent_project_SQL_primary_final tab1
+	GROUP BY tab1.`date`  
+),
+product2 AS (
+	SELECT DISTINCT 
+		tab1.`date`, 
+		round(SUM(tab1.product_avg_price), 2) AS all_products_price
+	FROM t_jakub_abbrent_project_SQL_primary_final tab1
+	GROUP BY tab1.`date`  
+)
+SELECT 
+	p1.`date`,
+-- 	p1.all_products_price,
+	p2.`date` AS previous_date,
+-- 	p2.all_products_price AS previous_all_products_price,
+	round((p1.all_products_price - p2.all_products_price) / p2.all_products_price * 100, 2) AS all_products_price_growth_percent -- výpoèet meziroèního nárùstu cen potravin
+FROM product1 p1
+JOIN product2 p2
+	ON p1.`date` = p2.`date` + 1 
+;
+
+-- average salary
+SELECT DISTINCT 
+-- 	tab1.*
+	tab1.`date`, 
+	round(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
+FROM t_jakub_abbrent_project_SQL_primary_final tab1
+GROUP BY tab1.`date` 
+;
+
+WITH salary1 AS (
+	SELECT DISTINCT 
+		tab1.`date`, 
+		round(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
+	FROM t_jakub_abbrent_project_SQL_primary_final tab1
+	GROUP BY tab1.`date` 
+),
+salary2 AS (
+	SELECT DISTINCT 
+		tab1.`date`, 
+		round(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
+	FROM t_jakub_abbrent_project_SQL_primary_final tab1
+	GROUP BY tab1.`date` 
+)
+SELECT 
+	s1.`date`,
+-- 	s1.avg_salary_per_year,
+	s2.`date` AS previous_date,
+-- 	s2.avg_salary_per_year AS previous_avg_salary_per_year,
+	round((s1.avg_salary_per_year - s2.avg_salary_per_year) / s2.avg_salary_per_year * 100, 2) AS avg_salary_growth_percent -- výpoèet meziroèního nárùstu cen potravin
+FROM salary1 s1
+JOIN salary2 s2
+	ON s1.`date` = s2.`date` + 1
+;
+
+
+-- product price + average salary
+WITH product_price_growth AS ( 
+	WITH product1 AS (
+		SELECT DISTINCT 
+			tab1.`date`, 
+			round(SUM(tab1.product_avg_price), 2) AS all_products_price
+		FROM t_jakub_abbrent_project_SQL_primary_final tab1
+		GROUP BY tab1.`date`  
+	),
+	product2 AS (
+		SELECT DISTINCT 
+			tab1.`date`, 
+			round(SUM(tab1.product_avg_price), 2) AS all_products_price
+		FROM t_jakub_abbrent_project_SQL_primary_final tab1
+		GROUP BY tab1.`date`  
+	)
+	SELECT 
+		p1.`date`,
+	-- 	p1.all_products_price,
+		p2.`date` AS previous_date,
+	-- 	p2.all_products_price AS previous_all_products_price,
+		round((p1.all_products_price - p2.all_products_price) / p2.all_products_price * 100, 2) AS all_products_price_growth_percent -- výpoèet meziroèního nárùstu cen potravin
+	FROM product1 p1
+	JOIN product2 p2
+		ON p1.`date` = p2.`date` + 1 
+), 
+avg_salary_growth AS (
+	WITH salary1 AS (
+		SELECT DISTINCT 
+			tab1.`date`, 
+			round(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
+		FROM t_jakub_abbrent_project_SQL_primary_final tab1
+		GROUP BY tab1.`date` 
+	),
+	salary2 AS (
+		SELECT DISTINCT 
+			tab1.`date`, 
+			round(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
+		FROM t_jakub_abbrent_project_SQL_primary_final tab1
+		GROUP BY tab1.`date` 
+	)
+	SELECT 
+		s1.`date`,
+	-- 	s1.avg_salary_per_year,
+		s2.`date` AS previous_date,
+	-- 	s2.avg_salary_per_year AS previous_avg_salary_per_year,
+		round((s1.avg_salary_per_year - s2.avg_salary_per_year) / s2.avg_salary_per_year * 100, 2) AS avg_salary_growth_percent -- výpoèet meziroèního nárùstu cen potravin
+	FROM salary1 s1
+	JOIN salary2 s2
+		ON s1.`date` = s2.`date` + 1
+)
+SELECT 
+	ppg.date, ppg.previous_date, ppg.all_products_price_growth_percent,
+	asg.avg_salary_growth_percent,
+	CASE
+		WHEN ppg.all_products_price_growth_percent - asg.avg_salary_growth_percent > 10 THEN 1
+		ELSE 0
+	END AS products_price_growth_higher_more_than_10_than_avg_salary_growth
+FROM product_price_growth ppg
+JOIN avg_salary_growth asg
+	ON ppg.date = asg.date
+;
+
+
+-- #########################################################################################
+/*
+ * PART 2:
+ * - Economies
+ * - GDP, GINI, ...
+ * - date from: 2006
+ * - date to: 2014
+ * */
+-- #########################################################################################
+
+CREATE TABLE IF NOT EXISTS t_jakub_abbrent_project_SQL_secondary_final
+(
+	SELECT 
+		e.country, e.`year`, e.GDP, e.population, e.gini 
+	FROM economies e 
+	WHERE 1=1
+		AND e.`year` >= 2006
+		AND e.`year` <= 2014
+)
+;
+
+SELECT 
+	tab2.*
+FROM t_jakub_abbrent_project_sql_secondary_final tab2;
+
+/*
+ * 5. Má výška HDP vliv na zmìny ve mzdách a cenách potravin? 
+ * Neboli, pokud HDP vzroste výraznìji v jednom roce, projeví se to na cenách potravin èi mzdách ve stejném nebo násdujícím roce výraznìjším rùstem?
+ * */
+
+SELECT 
+-- 	tab2.*,
+	tab2.`year`, tab2.GDP 
+FROM t_jakub_abbrent_project_sql_secondary_final tab2
+WHERE 1=1
+	AND tab2.country = 'Czech Republic'
+ORDER BY tab2.`year` 
+;
+
 
