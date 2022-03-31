@@ -264,6 +264,90 @@ FROM t_jakub_abbrent_project_SQL_primary_final tab1
 -- 	AND tab1.industry_name = 'Informaèní a komunikaèní èinnosti'
 -- ;
 
+-- zobrazení prùbìhu rùstu/poklesu platù u všech odvìtví v celém rozmezí let
+WITH temp1 AS 
+(
+	SELECT DISTINCT 
+	-- 	tab1.*
+		tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
+	FROM t_jakub_abbrent_project_SQL_primary_final tab1
+	WHERE 1=1
+-- 			AND (tab1.industry_name = 'Informaèní a komunikaèní èinnosti'
+-- 			OR tab1.industry_name = 'Stavebnictví')
+),
+temp2 AS 
+(
+	SELECT DISTINCT 
+	-- 	tab1.*
+		tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
+	FROM t_jakub_abbrent_project_SQL_primary_final tab1
+	WHERE 1=1
+-- 			AND (tab1.industry_name = 'Informaèní a komunikaèní èinnosti'
+-- 			OR tab1.industry_name = 'Stavebnictví')
+)
+SELECT 
+	a.industry_name,
+	a.`date`,
+	a.industry_avg_salary,
+	b.`date` AS previous_date,
+	b.industry_avg_salary AS previous_industry_avg_salary,
+	round((a.industry_avg_salary - b.industry_avg_salary) / b.industry_avg_salary * 100, 2) AS avg_salary_growth_percent -- výpoèet meziroèního nárùstu platù
+FROM temp1 a
+JOIN temp2 b
+	ON a.`date` = b.`date` + 1
+	AND a.industry_name = b.industry_name 
+-- 	AND a.`date` = b.`date` + 1
+WHERE 1=1
+	-- AND (a.industry_avg_salary - b.industry_avg_salary) < 0
+ORDER BY a.industry_name, a.`date` 
+;
+
+-- zobrazení prùmìrného rùstu/poklesu platù u všech odvìtví v celém rozmezí let
+SELECT 
+-- 	*,
+	ind.industry_name,
+	round(AVG(ind.avg_salary_growth_percent), 2) AS salary_growth_percent_avg
+FROM 
+(
+	WITH temp1 AS 
+	(
+		SELECT DISTINCT 
+		-- 	tab1.*
+			tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
+		FROM t_jakub_abbrent_project_SQL_primary_final tab1
+		WHERE 1=1
+-- 			AND (tab1.industry_name = 'Informaèní a komunikaèní èinnosti'
+-- 			OR tab1.industry_name = 'Stavebnictví')
+	),
+	temp2 AS 
+	(
+		SELECT DISTINCT 
+		-- 	tab1.*
+			tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
+		FROM t_jakub_abbrent_project_SQL_primary_final tab1
+		WHERE 1=1
+-- 			AND (tab1.industry_name = 'Informaèní a komunikaèní èinnosti'
+-- 			OR tab1.industry_name = 'Stavebnictví')
+	)
+	SELECT 
+		a.industry_name,
+		a.`date`,
+		a.industry_avg_salary,
+		b.`date` AS previous_date,
+		b.industry_avg_salary AS previous_industry_avg_salary,
+		round((a.industry_avg_salary - b.industry_avg_salary) / b.industry_avg_salary * 100, 2) AS avg_salary_growth_percent -- výpoèet meziroèního nárùstu platù
+	FROM temp1 a
+	JOIN temp2 b
+		ON a.`date` = b.`date` + 1
+		AND a.industry_name = b.industry_name 
+	-- 	AND a.`date` = b.`date` + 1
+) AS ind	-- industry_growth 
+GROUP BY ind.industry_name 
+-- HAVING MIN(ind.avg_salary_growth_percent) > 0
+;
+
+
+-- odvìtví, u kterých nìkdy v prùbìhu let došlo k poklesu platù
 SELECT 
 	ind2.industry_name 
 FROM
@@ -271,7 +355,7 @@ FROM
 	SELECT 
 	-- 	*,
 		ind.industry_name,
-		MIN(ind.diff) AS max_salary_drop
+		MIN(ind.avg_salary_growth_percent) AS max_salary_drop
 	FROM 
 	(
 		WITH temp1 AS 
@@ -300,7 +384,7 @@ FROM
 			a.industry_avg_salary,
 			b.`date` AS previous_date,
 			b.industry_avg_salary AS previous_industry_avg_salary,
-			(a.industry_avg_salary - b.industry_avg_salary) AS diff
+			round((a.industry_avg_salary - b.industry_avg_salary) / b.industry_avg_salary * 100, 2) AS avg_salary_growth_percent -- výpoèet meziroèního nárùstu platù
 		FROM temp1 a
 		JOIN temp2 b
 			ON a.`date` = b.`date` + 1
@@ -310,6 +394,55 @@ FROM
 	GROUP BY ind.industry_name 
 ) AS ind2
 WHERE ind2.max_salary_drop < 0
+;
+
+-- odvìtví, u kterých nedošlo k poklesu platù
+SELECT 
+	ind2.industry_name 
+FROM
+(
+	SELECT 
+	-- 	*,
+		ind.industry_name,
+		MIN(ind.avg_salary_growth_percent) AS max_salary_drop
+	FROM 
+	(
+		WITH temp1 AS 
+		(
+			SELECT DISTINCT 
+			-- 	tab1.*
+				tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
+			FROM t_jakub_abbrent_project_SQL_primary_final tab1
+			WHERE 1=1
+	-- 			AND (tab1.industry_name = 'Informaèní a komunikaèní èinnosti'
+	-- 			OR tab1.industry_name = 'Stavebnictví')
+		),
+		temp2 AS 
+		(
+			SELECT DISTINCT 
+			-- 	tab1.*
+				tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
+			FROM t_jakub_abbrent_project_SQL_primary_final tab1
+			WHERE 1=1
+	-- 			AND (tab1.industry_name = 'Informaèní a komunikaèní èinnosti'
+	-- 			OR tab1.industry_name = 'Stavebnictví')
+		)
+		SELECT 
+			a.industry_name,
+			a.`date`,
+			a.industry_avg_salary,
+			b.`date` AS previous_date,
+			b.industry_avg_salary AS previous_industry_avg_salary,
+			round((a.industry_avg_salary - b.industry_avg_salary) / b.industry_avg_salary * 100, 2) AS avg_salary_growth_percent -- výpoèet meziroèního nárùstu platù
+		FROM temp1 a
+		JOIN temp2 b
+			ON a.`date` = b.`date` + 1
+			AND a.industry_name = b.industry_name 
+		-- 	AND a.`date` = b.`date` + 1
+	) AS ind	-- industry_growth 
+	GROUP BY ind.industry_name 
+) AS ind2
+WHERE ind2.max_salary_drop > 0
 ;
 
 /*
@@ -548,15 +681,34 @@ JOIN avg_salary_growth asg
  * */
 -- #########################################################################################
 
+-- SELECT DISTINCT 
+-- 	e.country 
+-- FROM economies e;
+
+-- SELECT 
+-- 	e.*, c.country, c.continent 
+-- -- 	e.country, e.`year`, e.GDP, e.population, e.gini 
+-- FROM economies e 
+-- JOIN countries c 
+-- 	ON e.country = c.country
+-- WHERE 1=1
+-- 	AND e.`year` >= 2006
+-- 	AND e.`year` <= 2014
+-- 	AND c.continent = 'Europe'
+-- ;
+
 -- Secondary table
 CREATE TABLE IF NOT EXISTS t_jakub_abbrent_project_SQL_secondary_final
 (
 	SELECT 
 		e.country, e.`year`, e.GDP, e.population, e.gini 
 	FROM economies e 
+	JOIN countries c 
+		ON e.country = c.country
 	WHERE 1=1
 		AND e.`year` >= 2006
 		AND e.`year` <= 2014
+		AND c.continent = 'Europe'
 )
 ;
 
