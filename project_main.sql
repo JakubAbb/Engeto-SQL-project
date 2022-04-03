@@ -19,14 +19,14 @@
 -- FROM czechia_price ci 
 -- ORDER BY ci.date_from;
 
--- -- pr˘mÏrnÈ ceny za celÈ obdobÌ pro jednotlivÈ kategorie zboûÌ v celÈ republice
+-- -- pr≈Ømƒõrn√© ceny za cel√© obdob√≠ pro jednotliv√© kategorie zbo≈æ√≠ v cel√© republice
 -- SELECT 
 -- 	YEAR(ci.date_from) AS `date`,
 -- 	cpc.name AS product_name,
 -- 	cpc.price_value AS quantity, 
 -- 	cpc.price_unit AS unit,
 -- -- 	ci.category_code,
--- 	ROUND(AVG(ci.value), 2) AS product_avg_price -- pr˘mÏrn· cena zboûÌ 
+-- 	ROUND(AVG(ci.value), 2) AS product_avg_price -- pr≈Ømƒõrn√° cena zbo≈æ√≠ 
 -- FROM czechia_price ci 
 -- JOIN czechia_price_category cpc 
 -- 	ON ci.category_code = cpc.code 
@@ -39,14 +39,14 @@
 
 -- SELECT 26*19*9;
 
--- ceny za vÌce let pro celou republiku, pro jednotliv· odvÏtvÌ
+-- ceny za v√≠ce let pro celou republiku, pro jednotliv√© kategorie zbo≈æ√≠
 SELECT 
 -- 	ci.*,
 	YEAR(ci.date_from) AS `date`,
 	cpc.name AS product_name, 
 	cpc.price_value AS quantity, 
 	cpc.price_unit AS unit,
-	ROUND(AVG(ci.value), 2) AS product_avg_price -- pr˘mÏrn· cena zboûÌ
+	ROUND(AVG(ci.value), 2) AS product_avg_price -- pr≈Ømƒõrn√° cena zbo≈æ√≠
 -- 	ci.value,
 -- 	ci.category_code
 FROM czechia_price ci 
@@ -57,12 +57,12 @@ WHERE 1=1
 	AND YEAR(ci.date_from) >= 2006
 	AND YEAR(ci.date_from) <= 2014
 	AND ci.region_code IS NULL
--- 	AND ci.category_code = 213201 -- pivo v˝ËepnÌ
+-- 	AND ci.category_code = 213201 -- pivo v√Ωƒçepn√≠
 GROUP BY YEAR(ci.date_from), ci.category_code 
 -- ORDER BY ci.date_from
 ;
 
--- -- jin· varianta kÛdu, ale taky funguje
+-- -- jin√° varianta kodu, ale taky funguje
 -- SELECT 
 -- -- 	temp.*,
 -- -- 	temp.category_code, 
@@ -70,7 +70,7 @@ GROUP BY YEAR(ci.date_from), ci.category_code
 -- 	cpc.name AS product_name,
 -- 	cpc.price_value AS quantity, 
 -- 	cpc.price_unit AS unit,
--- 	ROUND(AVG(temp.value), 2) AS product_avg_price -- pr˘mÏrn· cena zboûÌ
+-- 	ROUND(AVG(temp.value), 2) AS product_avg_price -- pr≈Ømƒõrn√° cena zbo≈æ√≠
 -- FROM 
 -- 	(
 -- 		SELECT 
@@ -119,11 +119,11 @@ GROUP BY YEAR(ci.date_from), ci.category_code
 -- ORDER BY ca.payroll_year 
 -- ;
 
--- -- pr˘mÏrnÈ platy za celÈ obdobÌ pro jednotliv· odvÏtvÌ v celÈ republice
+-- -- pr≈Ømƒõrn√© platy za cel√© obdob√≠ pro jednotliv√° odvƒõtv√≠ v cel√© republice
 -- SELECT 
 -- 	ca.payroll_year AS `date`, 
 -- 	cpib.name AS industry_name,
--- 	ROUND(AVG(ca.value), 2) AS industry_avg_salary, -- pr˘mÏrnÈ platy
+-- 	ROUND(AVG(ca.value), 2) AS industry_avg_salary, -- pr≈Ømƒõrn√© platy
 -- 	cpu.name AS currency
 -- FROM czechia_payroll ca
 -- JOIN czechia_payroll_calculation cpc 
@@ -136,17 +136,17 @@ GROUP BY YEAR(ci.date_from), ci.category_code
 -- 	ON ca.value_type_code = cpvt.code
 -- WHERE 1=1 
 -- 	AND ca.value_type_code = 5958 
--- 	AND ca.calculation_code = 100 -- pr˘mÏrn· HM na fyzickÈ osoby (HPP + vedlejöÌ)
--- -- 	AND ca.industry_branch_code IS NOT NULL -- pr˘mÏr pro vöechny odvÏtvÌ dohromady
+-- 	AND ca.calculation_code = 100 -- pr≈Ømƒõrn√° HM na fyzick√© osoby (HPP + vedlej≈°√≠)
+-- -- 	AND ca.industry_branch_code IS NOT NULL -- pr≈Ømƒõr pro v≈°echny odvƒõtv√≠ dohromady
 -- GROUP BY ca.industry_branch_code
 -- ORDER BY cpib.name
 -- ;
 
--- platy za vÌce let pro celou republiku, pouze pro jednotliv· odvÏtvÌ
+-- platy za v√≠ce let pro celou republiku, pouze pro jednotliv√° odvƒõtv√≠
 SELECT 
 	ca.payroll_year AS `date`, 
 	cpib.name AS industry_name,
-	ROUND(AVG(ca.value), 2) AS industry_avg_salary, -- pr˘mÏrnÈ platy
+	ROUND(AVG(ca.value), 2) AS industry_avg_salary, -- pr≈Ømƒõrn√© platy
 	cpu.name AS currency
 FROM czechia_payroll ca 
 JOIN czechia_payroll_calculation cpc 
@@ -159,25 +159,25 @@ JOIN czechia_payroll_value_type cpvt
 	ON ca.value_type_code = cpvt.code
 WHERE 1=1
 	AND ca.value_type_code = 5958
-	AND ca.calculation_code = 100 -- pr˘mÏrn· HM na fyzickÈ osoby (HPP + vedlejöÌ)
+	AND ca.calculation_code = 100 -- pr≈Ømƒõrn√° HM na fyzick√© osoby (HPP + vedlej≈°√≠)
 	AND ca.payroll_year >= 2006
 	AND ca.payroll_year <= 2014
--- 	AND ca.industry_branch_code IS NULL -- pr˘mÏr pro vöechny odvÏtvÌ dohromady
+-- 	AND ca.industry_branch_code IS NULL -- pr≈Ømƒõr pro v≈°echny odvƒõtv√≠ dohromady
 GROUP BY ca.payroll_year, ca.industry_branch_code 
 -- ORDER BY ca.payroll_year DESC
 ;
 
--- platy za vÌce let pro celou republiku, pro jednotliv· odvÏtvÌ i s celkovou pr˘mÏrnou mzdou v celÈ »R
+-- platy za v√≠ce let pro celou republiku, pro jednotliv√° odvƒõtv√≠ i s celkovou pr≈Ømƒõrnou mzdou v cel√© CR
 SELECT 
 	ca.*,
-	ROUND(AVG(ca.value), 2) AS industry_avg_salary -- pr˘mÏrnÈ platy
+	ROUND(AVG(ca.value), 2) AS industry_avg_salary -- pr≈Ømƒõrn√© platy
 FROM czechia_payroll ca 
 WHERE 1=1
 	AND ca.value_type_code = 5958
-	AND ca.calculation_code = 100 -- pr˘mÏrn· HM na fyzickÈ osoby (HPP + vedlejöÌ)
+	AND ca.calculation_code = 100 -- pr≈Ømƒõrn√° HM na fyzick√© osoby (HPP + vedlej≈°√≠)
 	AND ca.payroll_year >= 2006
 	AND ca.payroll_year <= 2014
--- 	AND ca.industry_branch_code IS NULL -- pr˘mÏr pro vöechny odvÏtvÌ dohromady
+-- 	AND ca.industry_branch_code IS NULL -- pr≈Ømƒõr pro v≈°echny odvƒõtv√≠ dohromady
 GROUP BY ca.payroll_year, ca.industry_branch_code 
 -- ORDER BY ca.payroll_year DESC
 ;
@@ -187,18 +187,18 @@ GROUP BY ca.payroll_year, ca.industry_branch_code
  * Czechia price + Czechia payroll = Primary table
  * */
 
--- ceny a platy za roky 2006-2014 pro celou republiku, pro jednotlivÈ kategorie zboûÌ a pro jednotliv· odvÏtvÌ
+-- ceny a platy za roky 2006-2014 pro celou republiku, pro jednotliv√© kategorie zbo≈æ√≠ a pro jednotliv√° odvƒõtv√≠
 
 CREATE TABLE IF NOT EXISTS t_jakub_abbrent_project_SQL_primary_final
 (
 	WITH products AS (
-		-- ceny za rok 2006-2014 pro celou republiku, pro jednotlivÈ kategorie zboûÌ
+		-- ceny za rok 2006-2014 pro celou republiku, pro jednotliv√© kategorie zbo≈æ√≠
 		SELECT 
 		YEAR(ci.date_from) AS `date`,
 		cpc.name AS product_name,
 		cpc.price_value AS quantity, 
 		cpc.price_unit AS unit,
-		ROUND(AVG(ci.value), 2) AS product_avg_price -- pr˘mÏrn· cena zboûÌ 
+		ROUND(AVG(ci.value), 2) AS product_avg_price -- pr≈Ømƒõrn√° cena zbo≈æ√≠ 
 		FROM czechia_price ci 
 		JOIN czechia_price_category cpc 
 			ON ci.category_code = cpc.code 
@@ -209,11 +209,11 @@ CREATE TABLE IF NOT EXISTS t_jakub_abbrent_project_SQL_primary_final
 		GROUP BY YEAR(ci.date_from), ci.category_code 
 	), 
 	salaries AS (
-		-- platy za rok 2006-2014 pro celou republiku, pro jednotliv· odvÏtvÌ
+		-- platy za rok 2006-2014 pro celou republiku, pro jednotliv√° odvƒõtv√≠
 		SELECT 
 		ca.payroll_year AS `date`, 
 		cpib.name AS industry_name,
-		ROUND(AVG(ca.value), 2) AS industry_avg_salary, -- pr˘mÏrnÈ platy
+		ROUND(AVG(ca.value), 2) AS industry_avg_salary, -- pr≈Ømƒõrn√© platy
 		cpu.name AS currency
 		FROM czechia_payroll ca 
 		JOIN czechia_payroll_calculation cpc 
@@ -226,7 +226,7 @@ CREATE TABLE IF NOT EXISTS t_jakub_abbrent_project_SQL_primary_final
 			ON ca.value_type_code = cpvt.code
 		WHERE 1=1
 			AND ca.value_type_code = 5958
-			AND ca.calculation_code = 100 -- pr˘mÏrn· HM na fyzickÈ osoby (HPP + vedlejöÌ)
+			AND ca.calculation_code = 100 -- pr≈Ømƒõrn√° HM na fyzick√© osoby (HPP + vedlej≈°√≠)
 			AND ca.payroll_year >= 2006
 			AND ca.payroll_year <= 2014
 		GROUP BY ca.payroll_year, ca.industry_branch_code 
@@ -248,12 +248,12 @@ FROM t_jakub_abbrent_project_SQL_primary_final tab1
 
 -- #########################################################################################
 /* PART 1:
- * - V˝zkumnÈ ot·zky 1-4
+ * - V√Ωzkumn√© ot√°zky 1-4
  * */
 -- #########################################################################################
 
 /*
- * 1. Rostou v pr˘bÏhu let mzdy ve vöech odvÏtvÌch, nebo v nÏkter˝ch klesajÌ?
+ * 1. Rostou v pr≈Øbƒõhu let mzdy ve v≈°ech odvƒõtv√≠ch, nebo v nƒõkter√Ωch klesaj√≠?
  * */
 
 -- SELECT DISTINCT 
@@ -261,10 +261,10 @@ FROM t_jakub_abbrent_project_SQL_primary_final tab1
 -- 	tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
 -- FROM t_jakub_abbrent_project_SQL_primary_final tab1
 -- WHERE 1=1
--- 	AND tab1.industry_name = 'InformaËnÌ a komunikaËnÌ Ëinnosti'
+-- 	AND tab1.industry_name = 'Informaƒçn√≠ a komunikaƒçn√≠ ƒçinnosti'
 -- ;
 
--- zobrazenÌ pr˘bÏhu r˘stu/poklesu plat˘ u vöech odvÏtvÌ v celÈm rozmezÌ let
+-- zobrazen√≠ pr≈Øbƒõhu r≈Østu/poklesu plat≈Ø u v≈°ech odvƒõtv√≠ v cel√©m rozmez√≠ let
 WITH temp1 AS 
 (
 	SELECT DISTINCT 
@@ -272,8 +272,8 @@ WITH temp1 AS
 		tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
 	FROM t_jakub_abbrent_project_SQL_primary_final tab1
 	WHERE 1=1
--- 			AND (tab1.industry_name = 'InformaËnÌ a komunikaËnÌ Ëinnosti'
--- 			OR tab1.industry_name = 'StavebnictvÌ')
+-- 			AND (tab1.industry_name = 'Informaƒçn√≠ a komunikaƒçn√≠ ƒçinnosti'
+-- 			OR tab1.industry_name = 'Stavebnictv√≠')
 ),
 temp2 AS 
 (
@@ -282,8 +282,8 @@ temp2 AS
 		tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
 	FROM t_jakub_abbrent_project_SQL_primary_final tab1
 	WHERE 1=1
--- 			AND (tab1.industry_name = 'InformaËnÌ a komunikaËnÌ Ëinnosti'
--- 			OR tab1.industry_name = 'StavebnictvÌ')
+-- 			AND (tab1.industry_name = 'Informaƒçn√≠ a komunikaƒçn√≠ ƒçinnosti'
+-- 			OR tab1.industry_name = 'Stavebnictv√≠')
 )
 SELECT 
 	a.industry_name,
@@ -291,7 +291,7 @@ SELECT
 	a.industry_avg_salary,
 	b.`date` AS previous_date,
 	b.industry_avg_salary AS previous_industry_avg_salary,
-	round((a.industry_avg_salary - b.industry_avg_salary) / b.industry_avg_salary * 100, 2) AS avg_salary_growth_percent -- v˝poËet meziroËnÌho n·r˘stu plat˘
+	ROUND((a.industry_avg_salary - b.industry_avg_salary) / b.industry_avg_salary * 100, 2) AS avg_salary_growth_percent -- v√Ωpoƒçet meziroƒçn√≠ho n√°r≈Østu plat≈Ø
 FROM temp1 a
 JOIN temp2 b
 	ON a.`date` = b.`date` + 1
@@ -302,11 +302,11 @@ WHERE 1=1
 ORDER BY a.industry_name, a.`date` 
 ;
 
--- zobrazenÌ pr˘mÏrnÈho r˘stu/poklesu plat˘ u vöech odvÏtvÌ v celÈm rozmezÌ let
+-- zobrazen√≠ pr≈Ømƒõrn√©ho r≈Østu/poklesu plat≈Ø u v≈°ech odvƒõtv√≠ v cel√©m rozmez√≠ let
 SELECT 
 -- 	*,
 	ind.industry_name,
-	round(AVG(ind.avg_salary_growth_percent), 2) AS salary_growth_percent_avg
+	ROUND(AVG(ind.avg_salary_growth_percent), 2) AS salary_growth_percent_avg
 FROM 
 (
 	WITH temp1 AS 
@@ -316,8 +316,8 @@ FROM
 			tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
 		FROM t_jakub_abbrent_project_SQL_primary_final tab1
 		WHERE 1=1
--- 			AND (tab1.industry_name = 'InformaËnÌ a komunikaËnÌ Ëinnosti'
--- 			OR tab1.industry_name = 'StavebnictvÌ')
+-- 			AND (tab1.industry_name = 'Informaƒçn√≠ a komunikaƒçn√≠ ƒçinnosti'
+-- 			OR tab1.industry_name = 'Stavebnictv√≠')
 	),
 	temp2 AS 
 	(
@@ -326,8 +326,8 @@ FROM
 			tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
 		FROM t_jakub_abbrent_project_SQL_primary_final tab1
 		WHERE 1=1
--- 			AND (tab1.industry_name = 'InformaËnÌ a komunikaËnÌ Ëinnosti'
--- 			OR tab1.industry_name = 'StavebnictvÌ')
+-- 			AND (tab1.industry_name = 'Informaƒçn√≠ a komunikaƒçn√≠ ƒçinnosti'
+-- 			OR tab1.industry_name = 'Stavebnictv√≠')
 	)
 	SELECT 
 		a.industry_name,
@@ -335,7 +335,7 @@ FROM
 		a.industry_avg_salary,
 		b.`date` AS previous_date,
 		b.industry_avg_salary AS previous_industry_avg_salary,
-		round((a.industry_avg_salary - b.industry_avg_salary) / b.industry_avg_salary * 100, 2) AS avg_salary_growth_percent -- v˝poËet meziroËnÌho n·r˘stu plat˘
+		ROUND((a.industry_avg_salary - b.industry_avg_salary) / b.industry_avg_salary * 100, 2) AS avg_salary_growth_percent -- v√Ωpoƒçet meziroƒçn√≠ho n√°r≈Østu plat≈Ø
 	FROM temp1 a
 	JOIN temp2 b
 		ON a.`date` = b.`date` + 1
@@ -347,7 +347,7 @@ GROUP BY ind.industry_name
 ;
 
 
--- odvÏtvÌ, u kter˝ch nÏkdy v pr˘bÏhu let doölo k poklesu plat˘
+-- odvƒõtv√≠, u kter√Ωch nƒõkdy v pr≈Øbƒõhu let do≈°lo k poklesu plat≈Ø
 SELECT 
 	ind2.industry_name 
 FROM
@@ -365,8 +365,8 @@ FROM
 				tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
 			FROM t_jakub_abbrent_project_SQL_primary_final tab1
 			WHERE 1=1
-	-- 			AND (tab1.industry_name = 'InformaËnÌ a komunikaËnÌ Ëinnosti'
-	-- 			OR tab1.industry_name = 'StavebnictvÌ')
+	-- 			AND (tab1.industry_name = 'Informaƒçn√≠ a komunikaƒçn√≠ ƒçinnosti'
+-- 			OR tab1.industry_name = 'Stavebnictv√≠')
 		),
 		temp2 AS 
 		(
@@ -375,8 +375,8 @@ FROM
 				tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
 			FROM t_jakub_abbrent_project_SQL_primary_final tab1
 			WHERE 1=1
-	-- 			AND (tab1.industry_name = 'InformaËnÌ a komunikaËnÌ Ëinnosti'
-	-- 			OR tab1.industry_name = 'StavebnictvÌ')
+	-- 			AND (tab1.industry_name = 'Informaƒçn√≠ a komunikaƒçn√≠ ƒçinnosti'
+-- 			OR tab1.industry_name = 'Stavebnictv√≠')
 		)
 		SELECT 
 			a.industry_name,
@@ -384,7 +384,7 @@ FROM
 			a.industry_avg_salary,
 			b.`date` AS previous_date,
 			b.industry_avg_salary AS previous_industry_avg_salary,
-			round((a.industry_avg_salary - b.industry_avg_salary) / b.industry_avg_salary * 100, 2) AS avg_salary_growth_percent -- v˝poËet meziroËnÌho n·r˘stu plat˘
+			ROUND((a.industry_avg_salary - b.industry_avg_salary) / b.industry_avg_salary * 100, 2) AS avg_salary_growth_percent -- v√Ωpoƒçet meziroƒçn√≠ho n√°r≈Østu plat≈Ø
 		FROM temp1 a
 		JOIN temp2 b
 			ON a.`date` = b.`date` + 1
@@ -396,7 +396,7 @@ FROM
 WHERE ind2.max_salary_drop < 0
 ;
 
--- odvÏtvÌ, u kter˝ch nedoölo k poklesu plat˘
+-- odvƒõtv√≠, u kter√Ωch nedo≈°lo k poklesu plat≈Ø
 SELECT 
 	ind2.industry_name 
 FROM
@@ -414,8 +414,8 @@ FROM
 				tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
 			FROM t_jakub_abbrent_project_SQL_primary_final tab1
 			WHERE 1=1
-	-- 			AND (tab1.industry_name = 'InformaËnÌ a komunikaËnÌ Ëinnosti'
-	-- 			OR tab1.industry_name = 'StavebnictvÌ')
+	-- 			AND (tab1.industry_name = 'Informaƒçn√≠ a komunikaƒçn√≠ ƒçinnosti'
+-- 			OR tab1.industry_name = 'Stavebnictv√≠')
 		),
 		temp2 AS 
 		(
@@ -424,8 +424,8 @@ FROM
 				tab1.`date`, tab1.industry_name, tab1.industry_avg_salary, tab1.salary_currency  
 			FROM t_jakub_abbrent_project_SQL_primary_final tab1
 			WHERE 1=1
-	-- 			AND (tab1.industry_name = 'InformaËnÌ a komunikaËnÌ Ëinnosti'
-	-- 			OR tab1.industry_name = 'StavebnictvÌ')
+	-- 			AND (tab1.industry_name = 'Informaƒçn√≠ a komunikaƒçn√≠ ƒçinnosti'
+-- 			OR tab1.industry_name = 'Stavebnictv√≠')
 		)
 		SELECT 
 			a.industry_name,
@@ -433,7 +433,7 @@ FROM
 			a.industry_avg_salary,
 			b.`date` AS previous_date,
 			b.industry_avg_salary AS previous_industry_avg_salary,
-			round((a.industry_avg_salary - b.industry_avg_salary) / b.industry_avg_salary * 100, 2) AS avg_salary_growth_percent -- v˝poËet meziroËnÌho n·r˘stu plat˘
+			ROUND((a.industry_avg_salary - b.industry_avg_salary) / b.industry_avg_salary * 100, 2) AS avg_salary_growth_percent -- v√Ωpoƒçet meziroƒçn√≠ho n√°r≈Østu plat≈Ø
 		FROM temp1 a
 		JOIN temp2 b
 			ON a.`date` = b.`date` + 1
@@ -446,29 +446,29 @@ WHERE ind2.max_salary_drop > 0
 ;
 
 /*
- * 2. Kolik je moûnÈ si koupit litr˘ mlÈka a kilogram˘ chleba za prvnÌ a poslednÌ srovnatelnÈ obdobÌ v dostupn˝ch datech cen a mezd?
+ * 2. Kolik je mo≈æn√© si koupit litr≈Ø ml√©ka a kilogram≈Ø chleba za prvn√≠ a posledn√≠ srovnateln√© obdob√≠ v dostupn√Ωch datech cen a mezd?
  * */
 
--- -- mnoûstvÌ produktu na jednotliv· odvÏtvÌ pro roky 2006-2014
+-- -- mno≈æstv√≠ produktu na jednotliv√© odvƒõtv√≠ pro roky 2006-2014
 -- SELECT 
 -- 	tab1.*,
 -- 	tab1.`date`, tab1.product_name, tab1.industry_name, 
--- 	round(tab1.industry_avg_salary / tab1.product_avg_price, 2) AS  quantity,
+-- 	ROUND(tab1.industry_avg_salary / tab1.product_avg_price, 2) AS  quantity,
 -- 	tab1.unit 
 -- FROM t_jakub_abbrent_project_SQL_primary_final tab1
 -- WHERE 1=1
--- 	AND (tab1.product_name = 'MlÈko polotuËnÈ pasterovanÈ' 
--- 	OR tab1.product_name = 'ChlÈb konzumnÌ kmÌnov˝')
+-- 	AND (tab1.product_name = 'MlÔøΩko polotuÔøΩnÔøΩ pasterovanÔøΩ' 
+-- 	OR tab1.product_name = 'ChlÔøΩb konzumnÔøΩ kmÔøΩnovÔøΩ')
 -- 	AND (tab1.`date` = 2006
 -- 	OR tab1.`date` = 2014)
 -- GROUP BY tab1.`date`, tab1.product_name, tab1.industry_name 
 -- ;
 
--- mnoûstvÌ produktu pr˘mÏrnÏ za celou republiku pro roky 2006 a 2014
+-- mno≈æstv√≠ produktu pr≈Ømƒõrnƒõ za celou republiku pro roky 2006 a 2014
 WITH salaries AS (
 	SELECT DISTINCT 
 		tab1.`date`, 
-		round(AVG(tab1.industry_avg_salary), 2) AS avg_salary,
+		ROUND(AVG(tab1.industry_avg_salary), 2) AS avg_salary,
 		tab1.salary_currency
 	FROM t_jakub_abbrent_project_SQL_primary_final tab1
 	WHERE 1=1
@@ -482,14 +482,14 @@ products AS (
 		tab1.`date`, tab1.product_name, tab1.product_avg_price, tab1.unit  
 	FROM t_jakub_abbrent_project_SQL_primary_final tab1
 	WHERE 1=1
-		AND (tab1.product_name = 'MlÈko polotuËnÈ pasterovanÈ' 
-		OR tab1.product_name = 'ChlÈb konzumnÌ kmÌnov˝')
+		AND (tab1.product_name = 'Ml√©ko polotuƒçn√© pasterovan√©' 
+		OR tab1.product_name = 'Chl√©b konzumn√≠ km√≠nov√Ω')
 		AND (tab1.`date` = 2006
 		OR tab1.`date` = 2014)
 )
 SELECT 
 	p.date, p.product_name, 
-	round(s.avg_salary / p.product_avg_price, 2) AS  quantity,
+	ROUND(s.avg_salary / p.product_avg_price, 2) AS  quantity,
 	p.unit
 FROM products p
 JOIN salaries s 
@@ -497,12 +497,12 @@ JOIN salaries s
 ;
 
 /*
- * 3. Kter· kategorie potravin zdraûuje nejpomaleji (je u nÌ nejniûöÌ percentu·lnÌ meziroËnÌ n·r˘st)?
+ * 3. Kter√° kategorie potravin zdr≈æuje nejpomaleji (je u n√≠ nejni≈æ≈°√≠ percentu√°ln√≠ meziroƒçn√≠ n√°r≈Øst)?
  * */
 SELECT 
 -- 	ppg.*
 	ppg.product_name,
-	round(AVG(ppg.product_avg_price_growth_percent), 2) AS product_growth_percent -- meziroËnÌ n·r˘st cen potravin
+	ROUND(AVG(ppg.product_avg_price_growth_percent), 2) AS product_growth_percent -- meziroƒçn√≠ n√°r≈Øst cen potravin
 FROM (
 	WITH product1 AS (
 		SELECT DISTINCT 
@@ -522,12 +522,12 @@ FROM (
 		p1.product_avg_price,
 		p2.`date` AS previous_date,
 		p2.product_avg_price AS previous_product_avg_price,
-		round((p1.product_avg_price - p2.product_avg_price) / p2.product_avg_price * 100, 2) AS product_avg_price_growth_percent -- v˝poËet meziroËnÌho n·r˘stu cen potravin
+		ROUND((p1.product_avg_price - p2.product_avg_price) / p2.product_avg_price * 100, 2) AS product_avg_price_growth_percent -- v√Ωpoƒçet meziroƒçn√≠ho n√°r≈Østu cen potravin
 	FROM product1 p1
 	JOIN product2 p2
 		ON p1.`date` = p2.`date` + 1
 		AND p1.product_name = p2.product_name 
--- 	WHERE p1.product_name = 'Rajsk· jablka Ëerven· kulat·'
+-- 	WHERE p1.product_name = 'Rajsk√° jablka ƒçerven√° kulat√°'
 	) AS ppg -- product_price_growth
 GROUP BY ppg.product_name 
 ORDER BY product_growth_percent
@@ -535,14 +535,14 @@ LIMIT 1
 ;
 
 /*
- * 4. Existuje rok, ve kterÈm byl meziroËnÌ n·r˘st cen potravin v˝raznÏ vyööÌ neû r˘st mezd (vÏtöÌ neû 10 %)?
+ * 4. Existuje rok, ve kter√©m byl meziroƒçn√≠ n√°r≈Øst cen potravin v√Ωraznƒõ vy≈°≈°√≠ ne≈æ r≈Øst mezd (vƒõt≈°√≠ ne≈æ 10 %)?
  * */
 
 -- -- product price
 -- SELECT DISTINCT 
 -- -- 	tab1.*
 -- 	tab1.`date`, 
--- 	round(SUM(tab1.product_avg_price), 2) AS all_products_price
+-- 	ROUND(SUM(tab1.product_avg_price), 2) AS all_products_price
 -- FROM t_jakub_abbrent_project_SQL_primary_final tab1
 -- GROUP BY tab1.`date`  
 -- ;
@@ -550,14 +550,14 @@ LIMIT 1
 -- WITH product1 AS (
 -- 	SELECT DISTINCT 
 -- 		tab1.`date`, 
--- 		round(SUM(tab1.product_avg_price), 2) AS all_products_price
+-- 		ROUND(SUM(tab1.product_avg_price), 2) AS all_products_price
 -- 	FROM t_jakub_abbrent_project_SQL_primary_final tab1
 -- 	GROUP BY tab1.`date`  
 -- ),
 -- product2 AS (
 -- 	SELECT DISTINCT 
 -- 		tab1.`date`, 
--- 		round(SUM(tab1.product_avg_price), 2) AS all_products_price
+-- 		ROUND(SUM(tab1.product_avg_price), 2) AS all_products_price
 -- 	FROM t_jakub_abbrent_project_SQL_primary_final tab1
 -- 	GROUP BY tab1.`date`  
 -- )
@@ -566,7 +566,7 @@ LIMIT 1
 -- -- 	p1.all_products_price,
 -- 	p2.`date` AS previous_date,
 -- -- 	p2.all_products_price AS previous_all_products_price,
--- 	round((p1.all_products_price - p2.all_products_price) / p2.all_products_price * 100, 2) AS all_products_price_growth_percent -- v˝poËet meziroËnÌho n·r˘stu cen potravin
+-- 	ROUND((p1.all_products_price - p2.all_products_price) / p2.all_products_price * 100, 2) AS all_products_price_growth_percent -- v√Ωpoƒçet meziroƒçn√≠ho n√°r≈Østu cen potravin
 -- FROM product1 p1
 -- JOIN product2 p2
 -- 	ON p1.`date` = p2.`date` + 1 
@@ -576,7 +576,7 @@ LIMIT 1
 -- SELECT DISTINCT 
 -- -- 	tab1.*
 -- 	tab1.`date`, 
--- 	round(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
+-- 	ROUND(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
 -- FROM t_jakub_abbrent_project_SQL_primary_final tab1
 -- GROUP BY tab1.`date` 
 -- ;
@@ -584,14 +584,14 @@ LIMIT 1
 -- WITH salary1 AS (
 -- 	SELECT DISTINCT 
 -- 		tab1.`date`, 
--- 		round(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
+-- 		ROUND(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
 -- 	FROM t_jakub_abbrent_project_SQL_primary_final tab1
 -- 	GROUP BY tab1.`date` 
 -- ),
 -- salary2 AS (
 -- 	SELECT DISTINCT 
 -- 		tab1.`date`, 
--- 		round(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
+-- 		ROUND(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
 -- 	FROM t_jakub_abbrent_project_SQL_primary_final tab1
 -- 	GROUP BY tab1.`date` 
 -- )
@@ -600,7 +600,7 @@ LIMIT 1
 -- -- 	s1.avg_salary_per_year,
 -- 	s2.`date` AS previous_date,
 -- -- 	s2.avg_salary_per_year AS previous_avg_salary_per_year,
--- 	round((s1.avg_salary_per_year - s2.avg_salary_per_year) / s2.avg_salary_per_year * 100, 2) AS avg_salary_growth_percent -- v˝poËet meziroËnÌho n·r˘stu cen potravin
+-- 	ROUND((s1.avg_salary_per_year - s2.avg_salary_per_year) / s2.avg_salary_per_year * 100, 2) AS avg_salary_growth_percent -- v√Ωpoƒçet meziroƒçn√≠ho n√°r≈Østu cen potravin
 -- FROM salary1 s1
 -- JOIN salary2 s2
 -- 	ON s1.`date` = s2.`date` + 1
@@ -612,14 +612,14 @@ WITH product_price_growth AS (
 	WITH product1 AS (
 		SELECT DISTINCT 
 			tab1.`date`, 
-			round(SUM(tab1.product_avg_price), 2) AS all_products_price
+			ROUND(SUM(tab1.product_avg_price), 2) AS all_products_price
 		FROM t_jakub_abbrent_project_SQL_primary_final tab1
 		GROUP BY tab1.`date`  
 	),
 	product2 AS (
 		SELECT DISTINCT 
 			tab1.`date`, 
-			round(SUM(tab1.product_avg_price), 2) AS all_products_price
+			ROUND(SUM(tab1.product_avg_price), 2) AS all_products_price
 		FROM t_jakub_abbrent_project_SQL_primary_final tab1
 		GROUP BY tab1.`date`  
 	)
@@ -628,7 +628,7 @@ WITH product_price_growth AS (
 	-- 	p1.all_products_price,
 		p2.`date` AS previous_date,
 	-- 	p2.all_products_price AS previous_all_products_price,
-		round((p1.all_products_price - p2.all_products_price) / p2.all_products_price * 100, 2) AS all_products_price_growth_percent -- v˝poËet meziroËnÌho n·r˘stu cen potravin
+		ROUND((p1.all_products_price - p2.all_products_price) / p2.all_products_price * 100, 2) AS all_products_price_growth_percent -- v√Ωpoƒçet meziroƒçn√≠ho n√°r≈Østu cen potravin
 	FROM product1 p1
 	JOIN product2 p2
 		ON p1.`date` = p2.`date` + 1 
@@ -637,14 +637,14 @@ avg_salary_growth AS (
 	WITH salary1 AS (
 		SELECT DISTINCT 
 			tab1.`date`, 
-			round(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
+			ROUND(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
 		FROM t_jakub_abbrent_project_SQL_primary_final tab1
 		GROUP BY tab1.`date` 
 	),
 	salary2 AS (
 		SELECT DISTINCT 
 			tab1.`date`, 
-			round(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
+			ROUND(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
 		FROM t_jakub_abbrent_project_SQL_primary_final tab1
 		GROUP BY tab1.`date` 
 	)
@@ -653,7 +653,7 @@ avg_salary_growth AS (
 	-- 	s1.avg_salary_per_year,
 		s2.`date` AS previous_date,
 	-- 	s2.avg_salary_per_year AS previous_avg_salary_per_year,
-		round((s1.avg_salary_per_year - s2.avg_salary_per_year) / s2.avg_salary_per_year * 100, 2) AS avg_salary_growth_percent -- v˝poËet meziroËnÌho n·r˘stu cen potravin
+		ROUND((s1.avg_salary_per_year - s2.avg_salary_per_year) / s2.avg_salary_per_year * 100, 2) AS avg_salary_growth_percent -- v√Ωpoƒçet meziroƒçn√≠ho n√°r≈Østu cen potravin
 	FROM salary1 s1
 	JOIN salary2 s2
 		ON s1.`date` = s2.`date` + 1
@@ -718,16 +718,16 @@ FROM t_jakub_abbrent_project_sql_secondary_final tab2;
 
 -- #########################################################################################
 /* PART 2:
- * - V˝zkumnÈ ot·zky 5
+ * - V√Ωzkumn√° ot√°zka 5
  * */
 -- #########################################################################################
 
 /*
- * 5. M· v˝öka HDP vliv na zmÏny ve mzd·ch a cen·ch potravin? 
- * Neboli, pokud HDP vzroste v˝raznÏji v jednom roce, projevÌ se to na cen·ch potravin Ëi mzd·ch ve stejnÈm nebo n·sdujÌcÌm roce v˝raznÏjöÌm r˘stem?
+ * 5. M√° v√Ω≈°kaka HDP vliv na zmƒõny ve mzd√°ch a cen√°ch potravin? 
+ * Neboli, pokud HDP vzroste v√Ωraznƒõji v jednom roce, projev√≠ se to na cen√°ch potravin ƒçi mzd√°ch ve stejn√©m nebo n√°sduj√≠c√≠m roce v√Ωraznƒõj≈°√≠m r≈Østem?
  * */
 
--- data pouze pro »eskou republiku
+-- data pouze pro ƒåeskou republiku
 SELECT 
 -- 	tab2.*,
 	tab2.`year`, tab2.GDP 
@@ -757,7 +757,7 @@ hdp2 AS (
 SELECT 
 	hdp1.`year` AS `date`, 
 	hdp2.`year` AS previous_date,
-	round((hdp1.GDP - hdp2.GDP) / hdp2.GDP * 100, 2) AS hdp_growth_percent -- v˝poËet meziroËnÌho n·r˘stu HDP
+	ROUND((hdp1.GDP - hdp2.GDP) / hdp2.GDP * 100, 2) AS hdp_growth_percent -- v√Ωpoƒçet meziroƒçn√≠ho n√°r≈Østu HDP
 FROM hdp1
 JOIN hdp2
 	ON hdp1.`year` = hdp2.`year` + 1
@@ -769,14 +769,14 @@ WITH product_price_growth AS (
 	WITH product1 AS (
 		SELECT DISTINCT 
 			tab1.`date`, 
-			round(SUM(tab1.product_avg_price), 2) AS all_products_price
+			ROUND(SUM(tab1.product_avg_price), 2) AS all_products_price
 		FROM t_jakub_abbrent_project_SQL_primary_final tab1
 		GROUP BY tab1.`date`  
 	),
 	product2 AS (
 		SELECT DISTINCT 
 			tab1.`date`, 
-			round(SUM(tab1.product_avg_price), 2) AS all_products_price
+			ROUND(SUM(tab1.product_avg_price), 2) AS all_products_price
 		FROM t_jakub_abbrent_project_SQL_primary_final tab1
 		GROUP BY tab1.`date`  
 	)
@@ -785,7 +785,7 @@ WITH product_price_growth AS (
 	-- 	p1.all_products_price,
 		p2.`date` AS previous_date,
 	-- 	p2.all_products_price AS previous_all_products_price,
-		round((p1.all_products_price - p2.all_products_price) / p2.all_products_price * 100, 2) AS all_products_price_growth_percent -- v˝poËet meziroËnÌho n·r˘stu cen potravin
+		ROUND((p1.all_products_price - p2.all_products_price) / p2.all_products_price * 100, 2) AS all_products_price_growth_percent -- v√Ωpoƒçet meziroƒçn√≠ho n√°r≈Østu cen potravin
 	FROM product1 p1
 	JOIN product2 p2
 		ON p1.`date` = p2.`date` + 1 
@@ -794,14 +794,14 @@ avg_salary_growth AS (
 	WITH salary1 AS (
 		SELECT DISTINCT 
 			tab1.`date`, 
-			round(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
+			ROUND(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
 		FROM t_jakub_abbrent_project_SQL_primary_final tab1
 		GROUP BY tab1.`date` 
 	),
 	salary2 AS (
 		SELECT DISTINCT 
 			tab1.`date`, 
-			round(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
+			ROUND(AVG(tab1.industry_avg_salary), 2) AS avg_salary_per_year
 		FROM t_jakub_abbrent_project_SQL_primary_final tab1
 		GROUP BY tab1.`date` 
 	)
@@ -810,7 +810,7 @@ avg_salary_growth AS (
 	-- 	s1.avg_salary_per_year,
 		s2.`date` AS previous_date,
 	-- 	s2.avg_salary_per_year AS previous_avg_salary_per_year,
-		round((s1.avg_salary_per_year - s2.avg_salary_per_year) / s2.avg_salary_per_year * 100, 2) AS avg_salary_growth_percent -- v˝poËet meziroËnÌho n·r˘stu cen potravin
+		ROUND((s1.avg_salary_per_year - s2.avg_salary_per_year) / s2.avg_salary_per_year * 100, 2) AS avg_salary_growth_percent -- v√Ωpoƒçet meziroƒçn√≠ho n√°r≈Østu cen potravin
 	FROM salary1 s1
 	JOIN salary2 s2
 		ON s1.`date` = s2.`date` + 1
@@ -835,7 +835,7 @@ hdp_growth AS (
 	SELECT 
 		hdp1.`year` AS `date`, 
 		hdp2.`year` AS previous_date,
-		round((hdp1.GDP - hdp2.GDP) / hdp2.GDP * 100, 2) AS hdp_growth_percent -- v˝poËet meziroËnÌho n·r˘stu HDP
+		ROUND((hdp1.GDP - hdp2.GDP) / hdp2.GDP * 100, 2) AS hdp_growth_percent -- v√Ωpoƒçet meziroƒçn√≠ho n√°r≈Østu HDP
 	FROM hdp1
 	JOIN hdp2
 		ON hdp1.`year` = hdp2.`year` + 1
